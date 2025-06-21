@@ -1,0 +1,2 @@
+﻿public record PaymentDto(int Id, int ReservationId, decimal Amount, PaymentMethod Method, DateTime PaymentDate);
+public record ProcessPaymentDto(int ReservationId, decimal Amount, PaymentMethod Method, string CardToken);
