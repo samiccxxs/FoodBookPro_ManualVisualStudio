@@ -1,13 +1,41 @@
-﻿// Program.cs
-using FoodBook.Persistence.Extensions;
+﻿using FoodBook.Persistence.Extensions; 
+using FoodBook.Application.Extensions; 
+using FoodBook.Infrastructure.Extensions; 
 
-var builder = WebApplication.CreateBuilder(args);
+namespace FoodBookProAPI
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
-// Agregar servicios de persistencia
-builder.Services.AddPersistenceServices(builder.Configuration);
 
-// ... otros servicios
+            builder.Services.AddControllers(); 
+            builder.Services.AddEndpointsApiExplorer(); 
+            builder.Services.AddSwaggerGen(); 
 
-var app = builder.Build();
+            
+            builder.Services.AddPersistenceServices(builder.Configuration);
 
-// ... configuración del pipeline
+            builder.Services.AddApplicationServices();
+
+            builder.Services.AddInfrastructureServices(builder.Configuration); 
+
+            var app = builder.Build();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger(); 
+                app.UseSwaggerUI(); 
+            }
+
+
+            app.UseAuthorization(); 
+
+            app.MapControllers(); 
+
+            app.Run();
+        }
+    }
+}

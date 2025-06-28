@@ -1,4 +1,4 @@
-﻿// ServiceCollectionExtensions.cs
+﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,11 +12,11 @@ namespace FoodBook.Persistence.Extensions
     {
         public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // Registrar DbContext
+            
             services.AddDbContext<FoodBookDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            // Registrar repositorios
+            
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRestaurantRepository, RestaurantRepository>();
             services.AddScoped<IReservationRepository, ReservationRepository>();

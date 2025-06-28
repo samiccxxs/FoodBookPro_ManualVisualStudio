@@ -1,4 +1,4 @@
-﻿// IPaymentService.cs
+﻿
 public interface IPaymentService
 {
     Task<PaymentDto> ProcessPaymentAsync(ProcessPaymentDto processPaymentDto);

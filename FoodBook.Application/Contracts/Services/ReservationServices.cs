@@ -1,4 +1,4 @@
-﻿
+
 using FoodBook.Application.Contracts.Repositories;
 using FoodBook.Application.Contracts.Services;
 using FoodBook.Application.Dtos.Reservation;
@@ -56,7 +56,7 @@ namespace FoodBook.Application.Services
             try
             {
                 var reservation = _mapper.Map<Reservation>(createReservationDto);
-               
+                
                 reservation.Status = "Pendiente"; 
                 reservation.CreatedDate = DateTime.Now;
 
@@ -82,7 +82,6 @@ namespace FoodBook.Application.Services
 
                 _mapper.Map(updateReservationDto, existingReservation);
 
-                // Lógica de negocio para validar cambios de estado, etc.
                 await _reservationRepository.UpdateAsync(existingReservation);
                 var reservationDto = _mapper.Map<ReservationDto>(existingReservation);
                 return ServiceResult<ReservationDto>.Success(reservationDto, "Reserva actualizada exitosamente.");

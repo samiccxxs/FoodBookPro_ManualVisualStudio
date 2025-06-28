@@ -1,5 +1,4 @@
-﻿// IUserService.cs
-public interface IUserService
+﻿public interface IUserService
 {
     Task<UserDto> CreateUserAsync(CreateUserDto createUserDto);
     Task<UserDto> GetUserByIdAsync(int id);

@@ -1,4 +1,4 @@
-﻿// INotificationService.cs
+﻿
 public interface INotificationService
 {
     Task SendReservationConfirmationAsync(int reservationId);

@@ -1,5 +1,4 @@
-﻿// IRestaurantService.cs
-public interface IRestaurantService
+﻿public interface IRestaurantService
 {
     Task<RestaurantDto> CreateRestaurantAsync(CreateRestaurantDto createRestaurantDto);
     Task<RestaurantDto> GetRestaurantByIdAsync(int id);

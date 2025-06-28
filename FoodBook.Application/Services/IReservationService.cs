@@ -1,5 +1,4 @@
 ﻿
-// IReservationService.cs
 public interface IReservationService
 {
     Task<ReservationDto> CreateReservationAsync(CreateReservationDto createReservationDto);
