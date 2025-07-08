@@ -1,26 +1,17 @@
-﻿// PaymentRepository.cs
-using Microsoft.EntityFrameworkCore;
-using FoodBook.Application.Interfaces.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using FoodBook.Application.Contracts.Repositories; 
 using FoodBook.Domain.Entities;
-using FoodBook.Persistence.Context;
+using FoodBook.Persistence.Context; 
 
 namespace FoodBook.Persistence.Repositories
 {
-    public class PaymentRepository : IPaymentRepository
+    public class PaymentRepository : GenericRepository<Payment>, IPaymentRepository
     {
-        private readonly FoodBookDbContext _context;
+        private readonly FoodBookDbContext _context; 
 
-        public PaymentRepository(FoodBookDbContext context)
+        public PaymentRepository(FoodBookDbContext context) : base(context)
         {
-            _context = context;
-        }
-
-        public async Task<Payment> GetByIdAsync(int id)
-        {
-            return await _context.Payments
-                .Include(p => p.Reservation)
-                .Include(p => p.Transaction)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            _context = context; 
         }
 
         public async Task<Payment> GetByReservationIdAsync(int reservationId)
@@ -30,17 +21,15 @@ namespace FoodBook.Persistence.Repositories
                 .FirstOrDefaultAsync(p => p.ReservationId == reservationId);
         }
 
-        public async Task<Payment> AddAsync(Payment payment)
+
+        public override async Task<Payment> GetByIdAsync(int id)
         {
-            _context.Payments.Add(payment);
-            await _context.SaveChangesAsync();
-            return payment;
+            return await _context.Payments
+                .Include(p => p.Reservation)
+                .Include(p => p.Transaction)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task UpdateAsync(Payment payment)
-        {
-            _context.Entry(payment).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-        }
+
     }
 }

@@ -1,113 +1,85 @@
-﻿
+﻿using FoodBook.Application.Contracts.Services;
+using FoodBook.Application.Dtos.Reservation;
+using FoodBook.Application.Dtos.Common;
 using Microsoft.AspNetCore.Mvc;
-using FoodBook.Application.Contracts.Services; 
-using FoodBook.Application.Dtos.Reservation;  
-using Microsoft.Extensions.Logging;
-using FoodBook.Application.Dtos.Common;      
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FoodBookProAPI.Controllers
 {
-    [Route("api/[controller]")] 
-    [ApiController] 
+    [ApiController]
+    [Route("api/[controller]")]
     public class ReservationController : ControllerBase
     {
         private readonly IReservationService _reservationService;
-        private readonly ILogger<ReservationController> _logger;
 
-        public ReservationController(IReservationService reservationService, ILogger<ReservationController> logger)
+        public ReservationController(IReservationService reservationService)
         {
             _reservationService = reservationService;
-            _logger = logger;
         }
 
-        
-        [HttpGet] 
-        public async Task<IActionResult> GetAllReservations()
+        [HttpGet]
+        public async Task<ActionResult<ServiceResult<List<ReservationDto>>>> GetAll()
         {
-            _logger.LogInformation("Intentando obtener todas las reservas.");
             var result = await _reservationService.GetAllReservationsAsync();
-
             if (result.IsSuccess)
             {
                 return Ok(result);
             }
-            else
-            {
-                _logger.LogError("Error al obtener reservas: {ErrorMessage}", result.Message);
-                return BadRequest(result);
-            }
+            return BadRequest(result);
         }
 
-        
-        [HttpGet("{id}")] 
-        public async Task<IActionResult> GetReservationById(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServiceResult<ReservationDto>>> GetById(int id)
         {
-            _logger.LogInformation("Intentando obtener reserva con ID: {Id}", id);
             var result = await _reservationService.GetReservationByIdAsync(id);
+            if (result.IsSuccess)
+            {
+                if (result.Data == null)
+                {
+                    return NotFound(ServiceResult<ReservationDto>.Failure($"Reserva con ID {id} no encontrada."));
+                }
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
 
+        [HttpPost]
+        public async Task<ActionResult<ServiceResult<ReservationDto>>> Create(CreateReservationDto dto)
+        {
+            var result = await _reservationService.CreateReservationAsync(dto);
+            if (result.IsSuccess)
+            {
+                return CreatedAtAction(nameof(GetById), new { id = result.Data.Id }, result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ServiceResult<ReservationDto>>> Update(int id, UpdateReservationDto dto)
+        {
+            if (id != dto.Id)
+            {
+                return BadRequest(ServiceResult<ReservationDto>.Failure("El ID de la ruta no coincide con el ID del cuerpo de la solicitud."));
+            }
+
+            var result = await _reservationService.UpdateReservationAsync(dto);
             if (result.IsSuccess)
             {
                 return Ok(result);
             }
-            else
-            {
-                _logger.LogError("Error al obtener reserva {Id}: {ErrorMessage}", id, result.Message);
-                return NotFound(result);
-            }
+            return BadRequest(result);
         }
 
-        
-        [HttpPost] 
-        public async Task<IActionResult> CreateReservation([FromBody] CreateReservationDto createReservationDto)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResult>> Cancel(int id)
         {
-            _logger.LogInformation("Intentando crear una nueva reserva para el usuario: {UserId}", createReservationDto.UserId);
-            var result = await _reservationService.CreateReservationAsync(createReservationDto);
-
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                _logger.LogError("Error al crear reserva: {ErrorMessage}", result.Message);
-                return BadRequest(result);
-            }
-        }
-
-        
-        [HttpPut] 
-        public async Task<IActionResult> UpdateReservation([FromBody] UpdateReservationDto updateReservationDto)
-        {
-            _logger.LogInformation("Intentando actualizar reserva con ID: {Id}", updateReservationDto.Id);
-            var result = await _reservationService.UpdateReservationAsync(updateReservationDto);
-
-            if (result.IsSuccess)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                _logger.LogError("Error al actualizar reserva {Id}: {ErrorMessage}", updateReservationDto.Id, result.Message);
-                return BadRequest(result);
-            }
-        }
-
-        
-        [HttpDelete("{id}")] 
-        public async Task<IActionResult> CancelReservation(int id)
-        {
-            _logger.LogInformation("Intentando cancelar reserva con ID: {Id}", id);
             var result = await _reservationService.CancelReservationAsync(id);
-
             if (result.IsSuccess)
             {
                 return Ok(result);
             }
-            else
-            {
-                _logger.LogError("Error al cancelar reserva {Id}: {ErrorMessage}", id, result.Message);
-                return BadRequest(result);
-            }
+            return BadRequest(result);
         }
     }
 }

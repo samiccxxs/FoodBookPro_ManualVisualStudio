@@ -1,10 +1,12 @@
-
 using FoodBook.Application.Contracts.Repositories;
 using FoodBook.Application.Contracts.Services;
 using FoodBook.Application.Dtos.Reservation;
 using FoodBook.Application.Dtos.Common;
 using FoodBook.Domain.Entities;
 using AutoMapper;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System; 
 
 namespace FoodBook.Application.Services
 {
@@ -56,8 +58,7 @@ namespace FoodBook.Application.Services
             try
             {
                 var reservation = _mapper.Map<Reservation>(createReservationDto);
-                
-                reservation.Status = "Pendiente"; 
+                reservation.Status = "Pendiente";
                 reservation.CreatedDate = DateTime.Now;
 
                 var createdReservation = await _reservationRepository.AddAsync(reservation);

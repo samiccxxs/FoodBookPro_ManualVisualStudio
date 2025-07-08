@@ -1,76 +1,85 @@
-﻿/using Microsoft.AspNetCore.Mvc;
-using FoodBook.Application.Contracts.Services; 
-using FoodBook.Application.Dtos.Payment; 
-using Microsoft.Extensions.Logging; 
-using FoodBook.Application.Dtos.Common; 
+﻿using FoodBook.Application.Contracts.Services;
+using FoodBook.Application.Dtos.Payment;
+using FoodBook.Application.Dtos.Common;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FoodBookProAPI.Controllers
 {
-    [Route("api/[controller]")] 
     [ApiController]
+    [Route("api/[controller]")]
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
-        private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(IPaymentService paymentService, ILogger<PaymentController> logger)
+        public PaymentController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
-            _logger = logger;
         }
 
-
-        [HttpGet("GetAllPayments")]
-        public async Task<IActionResult> GetAllPayments()
+        [HttpGet]
+        public async Task<ActionResult<ServiceResult<List<PaymentDto>>>> GetAll()
         {
-            _logger.LogInformation("Attempting to retrieve all payments.");
-            var result = await _paymentService.GetAllPaymentsAsync(); 
-
+            var result = await _paymentService.GetAllPaymentsAsync();
             if (result.IsSuccess)
             {
                 return Ok(result);
             }
-            else
-            {
-                _logger.LogError("Error retrieving payments: {ErrorMessage}", result.Message);
-                return BadRequest(result);
-            }
+            return BadRequest(result); 
         }
-
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPaymentById(int id)
+        public async Task<ActionResult<ServiceResult<PaymentDto>>> GetById(int id)
         {
-            _logger.LogInformation("Attempting to retrieve payment with ID: {Id}", id);
             var result = await _paymentService.GetPaymentByIdAsync(id);
-
             if (result.IsSuccess)
             {
+                if (result.Data == null) 
+                {
+                    return NotFound(ServiceResult<PaymentDto>.Failure($"Pago con ID {id} no encontrado."));
+                }
                 return Ok(result);
             }
-            else
-            {
-                _logger.LogError("Error retrieving payment {Id}: {ErrorMessage}", id, result.Message);
-                return NotFound(result); 
-            }
+            return BadRequest(result);
         }
 
-        [HttpPost("ProcessPayment")]
-        public async Task<IActionResult> ProcessPayment([FromBody] ProcessPaymentDto processPaymentDto)
+        [HttpPost]
+        public async Task<ActionResult<ServiceResult<PaymentDto>>> Create(CreatePaymentDto dto)
         {
-            _logger.LogInformation("Attempting to process a new payment for reservation: {ReservationId}", processPaymentDto.ReservationId);
-            var result = await _paymentService.ProcessPaymentAsync(processPaymentDto); 
+            var result = await _paymentService.CreatePaymentAsync(dto);
+            if (result.IsSuccess)
+            {
+                return CreatedAtAction(nameof(GetById), new { id = result.Data.Id }, result);
+            }
+            return BadRequest(result);
+        }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ServiceResult<PaymentDto>>> Update(int id, UpdatePaymentDto dto)
+        {
+            if (id != dto.Id)
+            {
+                return BadRequest(ServiceResult<PaymentDto>.Failure("El ID de la ruta no coincide con el ID del cuerpo de la solicitud."));
+            }
+
+            var result = await _paymentService.UpdatePaymentAsync(dto);
             if (result.IsSuccess)
             {
                 return Ok(result);
             }
-            else
-            {
-                _logger.LogError("Error processing payment: {ErrorMessage}", result.Message);
-                return BadRequest(result);
-            }
+            return BadRequest(result);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResult>> Cancel(int id)
+        {
+            var result = await _paymentService.CancelPaymentAsync(id);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
     }
 }

@@ -13,8 +13,6 @@ namespace FoodBook.Application.MappingProfiles
             CreateMap<CreateReservationDto, Reservation>();
             CreateMap<UpdateReservationDto, Reservation>();
             CreateMap<UpdateReservationDto, Reservation>().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-
-           
             CreateMap<Reservation, ReservationDto>();
         }
     }

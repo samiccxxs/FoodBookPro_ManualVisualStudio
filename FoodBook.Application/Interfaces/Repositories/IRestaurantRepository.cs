@@ -1,10 +1,17 @@
-﻿// IRestaurantRepository.cs
-public interface IRestaurantRepository
+﻿using FoodBook.Application.Contracts.Repositories;
+using FoodBook.Domain.Entities;   
+using System.Collections.Generic; 
+using System.Threading.Tasks;     
+
+namespace FoodBook.Application.Interfaces.Repositories 
 {
-    Task<Restaurant> GetByIdAsync(int id);
-    Task<IEnumerable<Restaurant>> GetAllAsync();
-    Task<IEnumerable<Restaurant>> SearchByNameAsync(string name);
-    Task<Restaurant> AddAsync(Restaurant restaurant);
-    Task UpdateAsync(Restaurant restaurant);
-    Task DeleteAsync(int id);
+    public interface IReservationRepository : IGenericRepository<Reservation> 
+    {
+        Task<Reservation> GetByIdAsync(int id);
+        Task<IEnumerable<Reservation>> GetByUserIdAsync(int userId);
+        Task<IEnumerable<Reservation>> GetByRestaurantIdAsync(int restaurantId);
+        Task<Reservation> AddAsync(Reservation reservation);
+        Task UpdateAsync(Reservation reservation);
+        Task DeleteAsync(int id);
+    }
 }

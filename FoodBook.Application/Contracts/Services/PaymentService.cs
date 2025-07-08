@@ -1,16 +1,19 @@
-using FoodBook.Application.Contracts.Repositories; 
+using FoodBook.Application.Contracts.Repositories;
 using FoodBook.Application.Contracts.Services;
 using FoodBook.Application.Dtos.Payment;
 using FoodBook.Application.Dtos.Common;
-using FoodBook.Domain.Entities; 
+using FoodBook.Domain.Entities;
 using AutoMapper;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System; 
 
 namespace FoodBook.Application.Services
 {
     public class PaymentService : IPaymentService
     {
         private readonly IPaymentRepository _paymentRepository;
-        private readonly IMapper _mapper; 
+        private readonly IMapper _mapper;
 
         public PaymentService(IPaymentRepository paymentRepository, IMapper mapper)
         {
@@ -22,13 +25,12 @@ namespace FoodBook.Application.Services
         {
             try
             {
-                var payments = await _paymentRepository.GetAllAsync(); 
+                var payments = await _paymentRepository.GetAllAsync();
                 var paymentDtos = _mapper.Map<List<PaymentDto>>(payments);
                 return ServiceResult<List<PaymentDto>>.Success(paymentDtos);
             }
             catch (Exception ex)
             {
-                
                 return ServiceResult<List<PaymentDto>>.Failure($"Error al obtener pagos: {ex.Message}");
             }
         }
@@ -37,7 +39,7 @@ namespace FoodBook.Application.Services
         {
             try
             {
-                var payment = await _paymentRepository.GetByIdAsync(id); 
+                var payment = await _paymentRepository.GetByIdAsync(id);
                 if (payment == null)
                 {
                     return ServiceResult<PaymentDto>.Failure($"Pago con ID {id} no encontrado.");
@@ -55,9 +57,9 @@ namespace FoodBook.Application.Services
         {
             try
             {
-                var payment = _mapper.Map<Payment>(createPaymentDto); 
-                payment.PaymentDate = DateTime.Now; 
-                payment.Status = "Pendiente"; 
+                var payment = _mapper.Map<Payment>(createPaymentDto);
+                payment.PaymentDate = DateTime.Now;
+                payment.Status = "Pendiente";
 
                 var createdPayment = await _paymentRepository.AddAsync(payment);
                 var paymentDto = _mapper.Map<PaymentDto>(createdPayment);
@@ -79,9 +81,9 @@ namespace FoodBook.Application.Services
                     return ServiceResult<PaymentDto>.Failure($"Pago con ID {updatePaymentDto.Id} no encontrado para actualizar.");
                 }
 
-                _mapper.Map(updatePaymentDto, existingPayment); 
-                
-                await _paymentRepository.UpdateAsync(existingPayment); 
+                _mapper.Map(updatePaymentDto, existingPayment);
+
+                await _paymentRepository.UpdateAsync(existingPayment);
                 var paymentDto = _mapper.Map<PaymentDto>(existingPayment);
                 return ServiceResult<PaymentDto>.Success(paymentDto, "Pago actualizado exitosamente.");
             }
@@ -101,8 +103,7 @@ namespace FoodBook.Application.Services
                     return ServiceResult.Failure($"Pago con ID {id} no encontrado para cancelar.");
                 }
 
-
-                 paymentToCancel.Status = "Cancelado";
+                paymentToCancel.Status = "Cancelado";
                 await _paymentRepository.UpdateAsync(paymentToCancel);
 
                 return ServiceResult.Success("Pago cancelado exitosamente.");

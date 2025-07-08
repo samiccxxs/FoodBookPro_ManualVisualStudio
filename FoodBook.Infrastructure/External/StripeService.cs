@@ -1,8 +1,9 @@
-﻿using System;
-
-public class Class1
+﻿
+namespace FoodBook.Domain
 {
-	public Class1()
-	{
-	}
+    public class StripeService
+    {
+        
+    }
+    
 }

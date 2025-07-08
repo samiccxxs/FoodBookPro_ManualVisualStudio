@@ -1,10 +1,14 @@
-﻿public class Payment
+﻿namespace FoodBook.Domain.Entities
 {
-    public int Id { get; set; }
-    public int ReservationId { get; set; }
-    public Reservation Reservation { get; set; }
-    public decimal Amount { get; set; }
-    public PaymentMethod Method { get; set; }
-    public DateTime PaymentDate { get; set; }
-    public Transaction Transaction { get; set; }
+    public class Payment
+    {
+        public int Id { get; set; }
+        public int ReservationId { get; set; }
+        public decimal Amount { get; set; }
+        public string PaymentMethod { get; set; }
+        public string Status { get; set; }
+        public DateTime PaymentDate { get; set; }
+        public string Description { get; set; }
+
+    }
 }

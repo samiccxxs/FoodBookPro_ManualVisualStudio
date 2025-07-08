@@ -1,6 +1,7 @@
-
-using FoodBook.Application.Dtos.Payment;      
-using FoodBook.Application.Dtos.Common;      
+using FoodBook.Application.Dtos.Payment;
+using FoodBook.Application.Dtos.Common;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FoodBook.Application.Contracts.Services
 {

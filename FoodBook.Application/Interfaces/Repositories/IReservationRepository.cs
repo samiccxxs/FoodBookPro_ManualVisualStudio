@@ -1,5 +1,4 @@
-﻿/ IReservationRepository.cs
-public interface IReservationRepository
+﻿public interface IReservationRepository
 {
     Task<Reservation> GetByIdAsync(int id);
     Task<IEnumerable<Reservation>> GetByUserIdAsync(int userId);
@@ -7,3 +6,4 @@ public interface IReservationRepository
     Task<Reservation> AddAsync(Reservation reservation);
     Task UpdateAsync(Reservation reservation);
     Task DeleteAsync(int id);
+}

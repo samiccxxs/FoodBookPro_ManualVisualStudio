@@ -1,9 +1,11 @@
-﻿public class Transaction
+﻿using System;
+
+namespace FoodBook.Domain
 {
-    public int Id { get; set; }
-    public int PaymentId { get; set; }
-    public Payment Payment { get; set; }
-    public string TransactionId { get; set; }
-    public string Status { get; set; }
-    public DateTime ProcessedAt { get; set; }
+    public class Transaction
+    {
+        public int Id { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime TransactionDate { get; set; }
+    }
 }

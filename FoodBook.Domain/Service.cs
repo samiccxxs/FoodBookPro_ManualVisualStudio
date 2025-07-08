@@ -1,7 +1,7 @@
 ﻿namespace FoodBook.Domain
 {
-    public class INotificationService
+    public class Service
     {
-     
+        
     }
 }

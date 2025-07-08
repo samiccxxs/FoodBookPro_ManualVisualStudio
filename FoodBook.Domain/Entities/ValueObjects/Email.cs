@@ -1,14 +1,26 @@
-﻿// Email.cs
-public class Email
+﻿using System;
+using System.Text.RegularExpressions; 
+
+namespace FoodBook.Domain 
 {
-    public string Value { get; private set; }
-
-    public Email(string value)
+    public class Email
     {
-        if (string.IsNullOrEmpty(value) || !IsValidEmail(value))
-            throw new ArgumentException("Invalid email format");
-        Value = value;
-    }
+        public string Value { get; private set; }
 
-    private bool IsValidEmail(string email) => /* validación */;
+        public Email(string value)
+        {
+            if (string.IsNullOrEmpty(value) || !IsValidEmail(value))
+            {
+                throw new ArgumentException("Invalid email format");
+            }
+            Value = value;
+        }
+
+
+        private bool IsValidEmail(string email)
+        {
+
+            return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        }
+    }
 }

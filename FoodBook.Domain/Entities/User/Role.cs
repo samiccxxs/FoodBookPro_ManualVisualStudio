@@ -1,7 +1,9 @@
-﻿public enum PaymentMethod
-{
-    CreditCard,
-    DebitCard,
-    Cash,
-    DigitalWallet
+﻿namespace FoodBook.Domain
+{ 
+    public enum Role 
+    {
+        User,
+        Admin,
+        RestaurantOwner
+    }
 }
